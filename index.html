@@ -59,7 +59,7 @@
     <nav class="navbar">
         <div class="container">
             <a class="navbar-brand" [routerLink]="['/']" alt="Ir para a Home">
-                <img loading="lazy"alt="Imperium larp" width="116px" height="55px" src="./imagens/logo-imperium.png" alt="Logo em letras brancas escrito Imperium LARP">
+                <img loading="lazy"alt="Imperium larp" width="116px" height="55px" src="./imagens/logo-imperium.webp" alt="Logo em letras brancas escrito Imperium LARP">
             </a>
         </div>
     </nav>
@@ -165,12 +165,12 @@
     <section class="joke">
     </section>
     <section class="joke joke-end joke-full">
-        <img loading="lazy" width="100%" height="auto" alt="Dinossauro dizendo Meteoro" src="../imagens/mefeoro.png" />
+        <img loading="lazy" width="360px" height="602px" alt="Dinossauro dizendo Meteoro" src="../imagens/mefeoro.webp" />
     </section>
 
     <style>
         .joke {
-            height: 1000vh;
+            height: 1500vh;
             display: flex;
             text-align: center;
             align-items: center;
@@ -210,17 +210,17 @@
             margin-bottom: 15px;
             text-align: center;
             /* Thanks Ania Kubów! */
-            transition: cubic-bezier(.07, 1.41, .82, 1.41) 0.2s;
+            transition: transform cubic-bezier(.07, 1.41, .82, 1.41) 0.2s;
             position: relative;
         }
 
         .links:hover {
-            transition: cubic-bezier(.07, 1.41, .82, 1.41) 0.2s;
+            transition:transform cubic-bezier(.07, 1.41, .82, 1.41) 0.2s;
             transform: scale(1.02);
         }
 
         .links:active {
-            transition: cubic-bezier(.07, 1.41, .82, 1.41) 0.2s;
+            transition:transform cubic-bezier(.07, 1.41, .82, 1.41) 0.2s;
             transform: scale(.95);
         }
 
