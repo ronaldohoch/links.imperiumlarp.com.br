@@ -1,1 +1,1 @@
-# links.imperiumlarp.com.br
+"Cópia" do Linktr.ee para o imperium larp
