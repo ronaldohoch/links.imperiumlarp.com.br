@@ -23,3 +23,4 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_LINKS_IMPERIUM_LARP }}
           projectId: links-imperium-larp
+      run: firebase deploy --only hosting --project links-imperium-larp
