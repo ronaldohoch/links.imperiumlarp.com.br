@@ -7,190 +7,331 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Links Imperium LARP</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@700&family=Cormorant+Garamond:ital,wght@0,400;1,400;1,500&display=swap" rel="stylesheet">
+
     <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg:            #0d0808;
+            --surface:       #161010;
+            --surface-hover: #1f1414;
+            --border:        #2e1818;
+            --border-active: #7a2020;
+            --crimson:       #9b2335;
+            --crimson-bright:#c0392b;
+            --gold:          #c9a84c;
+            --gold-dim:      #7a6030;
+            --text:          #e8ddd5;
+            --text-dim:      #8a7570;
+            --text-muted:    #3a2a28;
+        }
 
         body {
             margin: 0;
             padding: 0;
-            display: flex;
-            flex-direction: column;
-            background: #000;
-            align-items: center;
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 15px;
-            background: #171717;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Cinzel', 'Times New Roman', serif;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        main {
-            width: 80%;
+        /* Subtle warm glow at the top */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40vh;
+            background: radial-gradient(ellipse 70% 60% at 50% -10%, rgba(155, 35, 53, 0.18) 0%, transparent 100%);
+            pointer-events: none;
+            z-index: 0;
         }
+
+        /* Noise grain overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+            opacity: 0.06;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ─── NAVBAR ─────────────────────────────────────────────────────── */
 
         .navbar {
-            /* background: rgb(66, 33, 33);
-            background: linear-gradient(180deg, rgba(66, 33, 33, 1) 45%, rgba(0, 0, 0, 1) 111%); */
-            height: 90px;
-            line-height: 90px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 36px 20px 30px;
+        }
+
+        /* Crimson + gold gradient line below navbar */
+        .navbar::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 8%;
+            right: 8%;
+            height: 1px;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                var(--border-active) 20%,
+                var(--gold) 50%,
+                var(--border-active) 80%,
+                transparent 100%
+            );
+        }
+
+        .navbar-brand {
+            display: inline-flex;
+        }
+
+        .navbar-brand img {
+            height: 65px;
+            width: auto;
+            filter: drop-shadow(0 2px 16px rgba(192, 57, 43, 0.25));
+            transition: filter 0.4s ease;
+        }
+
+        .navbar-brand:hover img,
+        .navbar-brand:focus img {
+            filter: drop-shadow(0 2px 28px rgba(192, 57, 43, 0.5));
+        }
+
+        /* ─── MAIN ───────────────────────────────────────────────────────── */
+
+        main {
+            position: relative;
+            z-index: 1;
+            width: min(620px, 90%);
+            margin: 0 auto;
+            padding: 44px 0 64px;
+        }
+
+        /* Decorative eyebrow above links */
+        .links-eyebrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .links-eyebrow::before,
+        .links-eyebrow::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-active));
+        }
+
+        .links-eyebrow::after {
+            background: linear-gradient(90deg, var(--border-active), transparent);
+        }
+
+        .links-eyebrow span {
+            font-family: 'Cinzel Decorative', 'Cinzel', serif;
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.45em;
+            text-transform: uppercase;
+            color: var(--gold);
+            white-space: nowrap;
+        }
+
+        /* ─── LINKS LIST ─────────────────────────────────────────────────── */
+
+        ul {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        .links {
+            position: relative;
+            margin-bottom: 10px;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            background: linear-gradient(
+                110deg,
+                var(--surface) 0%,
+                rgba(22, 14, 14, 0.98) 100%
+            );
+            overflow: hidden;
+            transition:
+                border-color 0.28s ease,
+                box-shadow 0.28s ease,
+                transform 0.18s ease;
+        }
+
+        /* Left sweep on hover */
+        .links::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                90deg,
+                rgba(155, 35, 53, 0.12) 0%,
+                transparent 55%
+            );
+            opacity: 0;
+            transition: opacity 0.28s ease;
+            pointer-events: none;
+        }
+
+        .links:not(.links--disabled):hover {
+            border-color: var(--border-active);
+            box-shadow:
+                0 0 0 1px rgba(155, 35, 53, 0.15),
+                0 4px 24px rgba(155, 35, 53, 0.15),
+                inset 0 1px 0 rgba(255,255,255,0.03);
+            transform: translateY(-2px);
+        }
+
+        .links:not(.links--disabled):hover::before {
+            opacity: 1;
+        }
+
+        .links:not(.links--disabled):active {
+            transform: translateY(0) scale(0.99);
+            box-shadow: none;
+        }
+
+        /* Disabled state */
+        .links--disabled {
+            opacity: 0.35;
+            cursor: default;
+        }
+
+        .links--disabled a {
+            pointer-events: none;
+            cursor: default;
+        }
+
+        /* Icon container */
+        .links__icon {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: 1px solid var(--border);
+            background: rgba(155, 35, 53, 0.08);
+            transition: background 0.28s ease, border-color 0.28s ease;
+            z-index: 1;
+        }
+
+        .links:hover .links__icon {
+            background: rgba(155, 35, 53, 0.22);
+            border-color: var(--border-active);
+        }
+
+        .links__icon .icon {
+            fill: var(--text-dim);
+            width: 17px;
+            height: 17px;
+            transition: fill 0.28s ease;
+            flex-shrink: 0;
+        }
+
+        .links:hover .links__icon .icon {
+            fill: var(--crimson-bright);
+        }
+
+        /* Link anchor */
+        .links a {
             display: flex;
             align-items: center;
             justify-content: center;
             width: 100%;
+            padding: 16px 50px;
+            color: var(--text);
+            text-decoration: none;
+            font-family: 'Cinzel', serif;
+            font-size: clamp(0.7rem, 2vw, 0.82rem);
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 1;
+            transition: color 0.28s ease;
         }
 
-        .navbar .container .navbar-brand {
-            height: 55px;
-            display: flex;
+        .links:hover a {
+            color: #f0e8e2;
         }
 
-        .navbar .container .navbar-brand img {
-            height: 55px;
-            width: auto;
+        .links a:focus-visible {
+            outline: 2px solid var(--crimson);
+            outline-offset: -2px;
         }
-    </style>
-</head>
 
-<body>
-    <nav class="navbar">
-        <div class="container">
-            <a class="navbar-brand" [routerLink]="['/']" alt="Ir para a Home">
-                <img id="logoImperium" loading="lazy"alt="Imperium larp" width="116px" height="55px" src="./imagens/logo-imperium.webp" alt="Logo em letras brancas escrito Imperium LARP">
-            </a>
-        </div>
-    </nav>
-    <main role="main">
-        <ul>
-            <li class="links">
-                <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256"><path d="M208,56H180.28L166.65,35.56A8,8,0,0,0,160,32H96a8,8,0,0,0-6.65,3.56L75.71,56H48A24,24,0,0,0,24,80V192a24,24,0,0,0,24,24H208a24,24,0,0,0,24-24V80A24,24,0,0,0,208,56Zm8,136a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V80a8,8,0,0,1,8-8H80a8,8,0,0,0,6.66-3.56L100.28,48h55.43l13.63,20.44A8,8,0,0,0,176,72h32a8,8,0,0,1,8,8ZM128,88a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,88Zm0,72a28,28,0,1,1,28-28A28,28,0,0,1,128,160Z"></path></svg>
-                <a href="https://drive.google.com/drive/folders/1ntld3Ipfn7xiWPHudQKcrJkz-LqEexOQ" target="_blank" rel="noopener noreferrer">📸 FOTOS SOMBRAS DE NOBILIA</a>
-            </li>
-            <li class="links" style="pointer-events: none;">
-                <a href="http://" target="_blank" rel="noopener noreferrer">Sem data para o próximo evento</a>
-            </li>
-            <li class="links">
-                <a href="https://www.imperiumlarp.com.br" target="_blank" rel="noopener noreferrer">Nosso site</a>
-            </li>
-            <li class="links">
-                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M96 0C43 0 0 43 0 96V416c0 53 43 96 96 96H384h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V384c17.7 0 32-14.3 32-32V32c0-17.7-14.3-32-32-32H384 96zm0 384H352v64H96c-17.7 0-32-14.3-32-32s14.3-32 32-32zm32-240c0-8.8 7.2-16 16-16H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16zm16 48H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/></svg>
-                <a href="https://drive.google.com/file/d/1gdF0GuRLPX5U_-JTedF3PAgyURxNgNQc/view?usp=sharing" target="_blank"
-                    rel="noopener noreferrer">Tomo de regras básicas 2.0</a>
-            </li>
-            <li class="links">
-                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M96 0C43 0 0 43 0 96V416c0 53 43 96 96 96H384h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V384c17.7 0 32-14.3 32-32V32c0-17.7-14.3-32-32-32H384 96zm0 384H352v64H96c-17.7 0-32-14.3-32-32s14.3-32 32-32zm32-240c0-8.8 7.2-16 16-16H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16zm16 48H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/></svg>
-                <a href="https://drive.google.com/file/d/1-BO_SJyZCzSuNyFRsbZfeeHI3H1Okj3V/view?usp=sharing"
-                    target="_blank" rel="noopener noreferrer">Tomo de Ambientação Sombras de Nobilia - PDF</a>
-            </li>
-            <li class="links">
-                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M96 0C43 0 0 43 0 96V416c0 53 43 96 96 96H384h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V384c17.7 0 32-14.3 32-32V32c0-17.7-14.3-32-32-32H384 96zm0 384H352v64H96c-17.7 0-32-14.3-32-32s14.3-32 32-32zm32-240c0-8.8 7.2-16 16-16H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16zm16 48H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/></svg>
-                <a href="https://soundcloud.com/imperium-larp/imperium-2025-tomo-de-ambientacao"
-                    target="_blank" rel="noopener noreferrer">Tomo de Ambientação Sombras de Nobilia - ÁUDIO</a>
-            </li>
-            <li class="links">
-                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M96 0C43 0 0 43 0 96V416c0 53 43 96 96 96H384h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V384c17.7 0 32-14.3 32-32V32c0-17.7-14.3-32-32-32H384 96zm0 384H352v64H96c-17.7 0-32-14.3-32-32s14.3-32 32-32zm32-240c0-8.8 7.2-16 16-16H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16zm16 48H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/></svg>
-                <a href="https://drive.google.com/file/d/14pHw_-IK4PulwaWpkTXmU0jjXv-OMEe7/view?usp=sharing"
-                    target="_blank" rel="noopener noreferrer">Tomo de personagens 3.0</a>
-            </li>
-            <li class="links">
-                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                    <path
-                        d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z" />
-                </svg>
-                <a href="https://www.instagram.com/imperiumlarprs" target="_blank" rel="noopener noreferrer">INSTAGRAM</a>
-            </li>
-            <li class="links">
-                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
-                    <path
-                        d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z" />
-                </svg>
-                <a href="https://www.youtube.com/channel/UCZMMMX6f3X_KJ5t9KFX1eCw" target="_blank" rel="noopener noreferrer">YOUTUBE</a>
-            </li>
-            <li class="links">
-                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                    <path
-                        d="M400 32H48A48 48 0 0 0 0 80v352a48 48 0 0 0 48 48h137.25V327.69h-63V256h63v-54.64c0-62.15 37-96.48 93.67-96.48 27.14 0 55.52 4.84 55.52 4.84v61h-31.27c-30.81 0-40.42 19.12-40.42 38.73V256h68.78l-11 71.69h-57.78V480H400a48 48 0 0 0 48-48V80a48 48 0 0 0-48-48z" />
-                </svg>
-                <a href="https://www.facebook.com/imperiumlarprs" target="_blank" rel="noopener noreferrer">FACEBOOK</a>
-            </li>
-        </ul>
-    </main>
+        /* Mobile: sem hover disponível — aplica as cores de hover como padrão */
+        @media (hover: none) {
+            .links:not(.links--disabled) {
+                border-color: var(--border-active);
+            }
 
-    <section class="joke joke-center">
-        <p>Para que tu está descendo? 🤔</p>
-    </section>
-    <section class="joke">
-    </section>
-    <section class="joke">
-        <p>Pare, não tem nada aqui.</p>
-    </section>
-    <section class="joke">
-    </section>
-    <section class="joke">
-        <p>Você quer muito ver o que tem lá em baixo, não? 😲</p>
-    </section>
-    <section class="joke">
-    </section>
-    <section class="joke">
-        <p>Uma vez um patrulheiro chegou até aqui.</p>
-        <p>Ele nunca mais voltou 😞</p>
-    </section>
-    <section class="joke">
-    </section>
-    <section class="joke">
-        <p>Você chegou na taverna. Beba uma cerveja: 🍺</p>
-    </section>
-    <section class="joke">
-    </section>
-    <section class="joke">
-        <p>Teve tempo de descer até aqui, teve tempo para ler o manual então, não?</p>
-    </section>
-    <section class="joke">
-    </section>
-    <section class="joke">
-        <p>Tem certeza?</p>
-    </section>
-    <section class="joke">
-    </section>
-    <section class="joke">
-        <p>Você achou o coração da floresta: 💚...</p>
-        <p>Zoeira, nós tiramos isso do evento faz tempo!</p>
-    </section>
-    <section class="joke">
-    </section>
-    <section class="joke">
-        <p>Manaetrix manaeron! Você vai continuar descendo!</p>
-    </section>
-    <section class="joke">
-    </section>
-    <section class="joke">
-        <p>Texto zoeira</p>
-    </section>
-    <section class="joke">
-    </section>
-    <section class="joke">
-        <p>Que Urzzia te proteja!</p>
-    </section>
-    <section class="joke">
-    </section>
-    <section class="joke joke-end joke-full">
-        <img loading="lazy" width="100%" height="auto" alt="Dinossauro dizendo Meteoro" src="../imagens/mefeoro.webp" />
-    </section>
+            .links:not(.links--disabled)::before {
+                opacity: 1;
+            }
 
-    <style>
+            .links:not(.links--disabled) .links__icon {
+                background: rgba(155, 35, 53, 0.22);
+                border-color: var(--border-active);
+            }
+
+            .links:not(.links--disabled) .links__icon .icon {
+                fill: var(--crimson-bright);
+            }
+
+            .links:not(.links--disabled) a {
+                color: #f0e8e2;
+            }
+        }
+
+        /* ─── JOKE SECTION ───────────────────────────────────────────────── */
+
         .joke {
+            position: relative;
+            z-index: 1;
             height: 1500vh;
             display: flex;
-            text-align: center;
+            flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            color: #fff;
-            width: 80%;
-            flex-direction: column;
+            padding: 120px 24px;
+            text-align: center;
         }
 
-        .joke img {
-            width: 100%;
+        .joke p {
+            font-family: 'Cormorant Garamond', 'Georgia', serif;
+            font-style: italic;
+            font-size: clamp(1rem, 3vw, 1.25rem);
+            color: var(--text-dim);
+            margin: 0;
+            max-width: 420px;
+            line-height: 1.7;
+            transition: color 0.6s ease;
         }
 
-        .joke-full {
-            width: 100%;
+        .joke:hover p {
+            color: var(--text);
         }
 
         .joke-center {
@@ -198,83 +339,210 @@
         }
 
         .joke-end {
-            justify-content: end;
+            justify-content: flex-end;
+            padding-bottom: 0;
         }
 
-
-        ul {
-            padding: 0;
-            margin: 0;
-            list-style: none;
-            margin-top: 2em;
-        }
-
-        .links {
-            background: #404040;
-            border-radius: 15px;
-            margin-bottom: 15px;
-            text-align: center;
-            /* Thanks Ania Kubów! */
-            transition: transform cubic-bezier(.07, 1.41, .82, 1.41) 0.2s;
-            position: relative;
-        }
-
-        .links:hover {
-            transition:transform cubic-bezier(.07, 1.41, .82, 1.41) 0.2s;
-            transform: scale(1.02);
-        }
-
-        .links:active {
-            transition:transform cubic-bezier(.07, 1.41, .82, 1.41) 0.2s;
-            transform: scale(.95);
-        }
-
-        .links a {
-            color: #fff;
-            text-decoration: none;
-            display: inline-block;
+        .joke-full {
             width: 100%;
-            padding: 12px 0;
+            padding: 0;
         }
 
-        .links a:hover,
-        .links a:focus,
-        .links a:active {
-            color: #fff;
-            text-decoration: none;
+        .joke img {
+            width: 100%;
+            display: block;
         }
 
-        .icon {
-            position: absolute;
-            fill: #fff;
-            width: 24px;
-            height: 24px;
-            top: 0;
-            bottom: 0;
-            left: 12px;
-            margin: auto;
+        /* Small ornament for joke paragraphs */
+        .joke p + p {
+            margin-top: 8px;
         }
     </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <a class="navbar-brand" href="#" alt="Ir para a Home">
+            <img id="logoImperium" loading="lazy" alt="Logo Imperium LARP" width="116" height="55"
+                src="./imagens/logo-imperium.webp">
+        </a>
+    </nav>
+
+    <main role="main">
+        <div class="links-eyebrow">
+            <span>Acesso Rápido</span>
+        </div>
+
+        <ul>
+            <li class="links">
+                <div class="links__icon">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+                        <path d="M208,56H180.28L166.65,35.56A8,8,0,0,0,160,32H96a8,8,0,0,0-6.65,3.56L75.71,56H48A24,24,0,0,0,24,80V192a24,24,0,0,0,24,24H208a24,24,0,0,0,24-24V80A24,24,0,0,0,208,56Zm8,136a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V80a8,8,0,0,1,8-8H80a8,8,0,0,0,6.66-3.56L100.28,48h55.43l13.63,20.44A8,8,0,0,0,176,72h32a8,8,0,0,1,8,8ZM128,88a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,88Zm0,72a28,28,0,1,1,28-28A28,28,0,0,1,128,160Z"/>
+                    </svg>
+                </div>
+                <a href="https://drive.google.com/drive/folders/1ntld3Ipfn7xiWPHudQKcrJkz-LqEexOQ" target="_blank" rel="noopener noreferrer">
+                    Fotos — Sombras de Nobilia
+                </a>
+            </li>
+
+            <li class="links links--disabled">
+                <a href="#" tabindex="-1" aria-disabled="true">
+                    Sem data para o próximo evento
+                </a>
+            </li>
+
+            <li class="links">
+                <div class="links__icon">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+                        <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm87.63,96H175.8c-1.42-32.38-12-62.65-28.06-84.58A88.22,88.22,0,0,1,215.63,120ZM128,215.89C108.7,195.11,96.58,162.14,96,128h64C159.42,162.14,147.3,195.11,128,215.89ZM96,112c.58-34.14,12.7-67.11,32-87.89C147.3,44.89,159.42,77.86,160,112ZM108.26,35.42C92.2,57.35,81.6,87.62,80.2,120H40.37A88.22,88.22,0,0,1,108.26,35.42ZM40.37,136H80.2c1.4,32.38,12,62.65,28.06,84.58A88.22,88.22,0,0,1,40.37,136Zm99.37,84.58C155.8,198.65,166.4,168.38,167.8,136h39.83A88.22,88.22,0,0,1,139.74,220.58Z"/>
+                    </svg>
+                </div>
+                <a href="https://www.imperiumlarp.com.br" target="_blank" rel="noopener noreferrer">
+                    Nosso Site
+                </a>
+            </li>
+
+            <li class="links">
+                <div class="links__icon">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                        <path d="M96 0C43 0 0 43 0 96V416c0 53 43 96 96 96H384h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V384c17.7 0 32-14.3 32-32V32c0-17.7-14.3-32-32-32H384 96zm0 384H352v64H96c-17.7 0-32-14.3-32-32s14.3-32 32-32zm32-240c0-8.8 7.2-16 16-16H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16zm16 48H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/>
+                    </svg>
+                </div>
+                <a href="https://drive.google.com/file/d/1gdF0GuRLPX5U_-JTedF3PAgyURxNgNQc/view?usp=sharing" target="_blank" rel="noopener noreferrer">
+                    Tomo de Regras Básicas 2.0
+                </a>
+            </li>
+
+            <li class="links">
+                <div class="links__icon">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                        <path d="M96 0C43 0 0 43 0 96V416c0 53 43 96 96 96H384h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V384c17.7 0 32-14.3 32-32V32c0-17.7-14.3-32-32-32H384 96zm0 384H352v64H96c-17.7 0-32-14.3-32-32s14.3-32 32-32zm32-240c0-8.8 7.2-16 16-16H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16zm16 48H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/>
+                    </svg>
+                </div>
+                <a href="https://drive.google.com/file/d/1-BO_SJyZCzSuNyFRsbZfeeHI3H1Okj3V/view?usp=sharing" target="_blank" rel="noopener noreferrer">
+                    Tomo de Ambientação Sombras de Nobilia — PDF
+                </a>
+            </li>
+
+            <li class="links">
+                <div class="links__icon">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+                        <path d="M210.3,56.34l-80-24A8,8,0,0,0,120,40V148a36,36,0,1,0,16,30V75.95l69.7,20.91A8,8,0,0,0,216,88V64A8,8,0,0,0,210.3,56.34ZM100,200a20,20,0,1,1-20-20A20,20,0,0,1,100,200ZM200,80.05,130.3,59.14,130,59V48.05l70,21Z"/>
+                    </svg>
+                </div>
+                <a href="https://soundcloud.com/imperium-larp/imperium-2025-tomo-de-ambientacao" target="_blank" rel="noopener noreferrer">
+                    Tomo de Ambientação Sombras de Nobilia — Áudio
+                </a>
+            </li>
+
+            <li class="links">
+                <div class="links__icon">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                        <path d="M96 0C43 0 0 43 0 96V416c0 53 43 96 96 96H384h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V384c17.7 0 32-14.3 32-32V32c0-17.7-14.3-32-32-32H384 96zm0 384H352v64H96c-17.7 0-32-14.3-32-32s14.3-32 32-32zm32-240c0-8.8 7.2-16 16-16H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16zm16 48H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/>
+                    </svg>
+                </div>
+                <a href="https://drive.google.com/file/d/14pHw_-IK4PulwaWpkTXmU0jjXv-OMEe7/view?usp=sharing" target="_blank" rel="noopener noreferrer">
+                    Tomo de Personagens 3.0
+                </a>
+            </li>
+
+            <li class="links">
+                <div class="links__icon">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                        <path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/>
+                    </svg>
+                </div>
+                <a href="https://www.instagram.com/imperiumlarprs" target="_blank" rel="noopener noreferrer">
+                    Instagram
+                </a>
+            </li>
+
+            <li class="links">
+                <div class="links__icon">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+                        <path d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z"/>
+                    </svg>
+                </div>
+                <a href="https://www.youtube.com/channel/UCZMMMX6f3X_KJ5t9KFX1eCw" target="_blank" rel="noopener noreferrer">
+                    YouTube
+                </a>
+            </li>
+
+            <li class="links">
+                <div class="links__icon">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                        <path d="M400 32H48A48 48 0 0 0 0 80v352a48 48 0 0 0 48 48h137.25V327.69h-63V256h63v-54.64c0-62.15 37-96.48 93.67-96.48 27.14 0 55.52 4.84 55.52 4.84v61h-31.27c-30.81 0-40.42 19.12-40.42 38.73V256h68.78l-11 71.69h-57.78V480H400a48 48 0 0 0 48-48V80a48 48 0 0 0-48-48z"/>
+                    </svg>
+                </div>
+                <a href="https://www.facebook.com/imperiumlarprs" target="_blank" rel="noopener noreferrer">
+                    Facebook
+                </a>
+            </li>
+        </ul>
+    </main>
+
+    <section class="joke joke-center">
+        <p>Para que tu está descendo? 🤔</p>
+    </section>
+    <section class="joke"></section>
+    <section class="joke">
+        <p>Pare, não tem nada aqui.</p>
+    </section>
+    <section class="joke"></section>
+    <section class="joke">
+        <p>Você quer muito ver o que tem lá em baixo, não? 😲</p>
+    </section>
+    <section class="joke"></section>
+    <section class="joke">
+        <p>Uma vez um patrulheiro chegou até aqui.</p>
+        <p>Ele nunca mais voltou 😞</p>
+    </section>
+    <section class="joke"></section>
+    <section class="joke">
+        <p>Você chegou na taverna. Beba uma cerveja: 🍺</p>
+    </section>
+    <section class="joke"></section>
+    <section class="joke">
+        <p>Teve tempo de descer até aqui, teve tempo para ler o manual então, não?</p>
+    </section>
+    <section class="joke"></section>
+    <section class="joke">
+        <p>Tem certeza?</p>
+    </section>
+    <section class="joke"></section>
+    <section class="joke">
+        <p>Você achou o coração da floresta: 💚...</p>
+        <p>Zoeira, nós tiramos isso do evento faz tempo!</p>
+    </section>
+    <section class="joke"></section>
+    <section class="joke">
+        <p>Manaetrix manaeron! Você vai continuar descendo!</p>
+    </section>
+    <section class="joke"></section>
+    <section class="joke">
+        <p>(O narrador perdeu as anotações.)</p>
+    </section>
+    <section class="joke"></section>
+    <section class="joke">
+        <p>Que Urzzia te proteja!</p>
+    </section>
+    <section class="joke"></section>
+    <section class="joke joke-end joke-full">
+        <img loading="lazy" width="100%" height="auto" alt="Dinossauro dizendo Meteoro" src="../imagens/mefeoro.webp" />
+    </section>
 
     <script>
         let brand = document.querySelector(".navbar-brand");
-        brand.addEventListener("click",()=>{
+        brand.addEventListener("click", () => {
             navigator.vibrate(350);
             window.addEventListener('deviceorientation', deviceOrientationHandler, false);
-        })
+        });
 
-        function deviceOrientationHandler (eventData) {
+        function deviceOrientationHandler(eventData) {
             var tiltLR = eventData.gamma;
             var tiltFB = eventData.beta;
-            var dir = eventData.alpha;
-
-            // document.getElementById("doTiltLR").innerHTML = Math.round(tiltLR);
-            // document.getElementById("doTiltFB").innerHTML = Math.round(tiltFB);
-            // document.getElementById("doDirection").innerHTML = Math.round(dir);
 
             let logo = document.querySelector("#logoImperium");
-            logo.style.webkitTransform = "rotate(" + tiltLR + "deg) rotate3d(1,0,0, " + (tiltFB * -1) + "deg)";
-            logo.style.MozTransform = "rotate(" + tiltLR + "deg)";
             logo.style.transform = "rotate(" + tiltLR + "deg) rotate3d(1,0,0, " + (tiltFB * -1) + "deg)";
         }
     </script>
