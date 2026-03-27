@@ -19,7 +19,6 @@
         :root {
             --bg:            #0d0808;
             --surface:       #161010;
-            --surface-hover: #1f1414;
             --border:        #2e1818;
             --border-active: #7a2020;
             --crimson:       #9b2335;
@@ -28,7 +27,6 @@
             --gold-dim:      #7a6030;
             --text:          #e8ddd5;
             --text-dim:      #8a7570;
-            --text-muted:    #3a2a28;
         }
 
         body {
@@ -36,7 +34,7 @@
             padding: 0;
             background-color: var(--bg);
             color: var(--text);
-            font-family: 'Cinzel', 'Times New Roman', serif;
+            font-family: 'Cinzel', Georgia, serif;
             min-height: 100vh;
             overflow-x: hidden;
         }
@@ -102,7 +100,7 @@
             height: 65px;
             width: auto;
             filter: drop-shadow(0 2px 16px rgba(192, 57, 43, 0.25));
-            transition: filter 0.4s ease;
+            transition: filter 0.3s ease-out;
         }
 
         .navbar-brand:hover img,
@@ -143,7 +141,7 @@
 
         .links-eyebrow span {
             font-family: 'Cinzel Decorative', 'Cinzel', serif;
-            font-size: 0.6rem;
+            font-size: 0.68rem;
             font-weight: 700;
             letter-spacing: 0.45em;
             text-transform: uppercase;
@@ -170,10 +168,11 @@
                 rgba(22, 14, 14, 0.98) 100%
             );
             overflow: hidden;
+            will-change: transform;
             transition:
-                border-color 0.28s ease,
-                box-shadow 0.28s ease,
-                transform 0.18s ease;
+                border-color 0.25s ease-out,
+                box-shadow 0.25s ease-out,
+                transform 0.15s ease-out;
         }
 
         /* Left sweep on hover */
@@ -232,7 +231,7 @@
             justify-content: center;
             border-right: 1px solid var(--border);
             background: rgba(155, 35, 53, 0.08);
-            transition: background 0.28s ease, border-color 0.28s ease;
+            transition: background 0.25s ease-out, border-color 0.25s ease-out;
             z-index: 1;
         }
 
@@ -245,7 +244,7 @@
             fill: var(--text-dim);
             width: 17px;
             height: 17px;
-            transition: fill 0.28s ease;
+            transition: fill 0.25s ease-out;
             flex-shrink: 0;
         }
 
@@ -263,13 +262,13 @@
             color: var(--text);
             text-decoration: none;
             font-family: 'Cinzel', serif;
-            font-size: clamp(0.7rem, 2vw, 0.82rem);
+            font-size: clamp(0.8rem, 2.5vw, 0.875rem);
             font-weight: 600;
             letter-spacing: 0.14em;
             text-transform: uppercase;
             position: relative;
             z-index: 1;
-            transition: color 0.28s ease;
+            transition: color 0.25s ease-out;
         }
 
         .links:hover a {
@@ -327,10 +326,13 @@
             margin: 0;
             max-width: 420px;
             line-height: 1.7;
-            transition: color 0.6s ease;
+            transition:
+                color 0.6s ease-out,
+                opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
-        .joke:hover p {
+        .joke:hover p.is-visible {
             color: var(--text);
         }
 
@@ -357,13 +359,89 @@
         .joke p + p {
             margin-top: 8px;
         }
+
+        /* ─── ENTRANCE ANIMATIONS ──────────────────────────────────────── */
+
+        @keyframes imperium-fade {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        @keyframes imperium-rise {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes imperium-line {
+            from { transform: scaleX(0); }
+            to   { transform: scaleX(1); }
+        }
+
+        /* Logo fades in first */
+        .navbar-brand img {
+            animation: imperium-fade 0.55s ease-out both;
+        }
+
+        /* Gradient divider draws itself from center */
+        .navbar::after {
+            transform-origin: center;
+            animation: imperium-line 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+        }
+
+        /* Eyebrow rises in */
+        .links-eyebrow {
+            animation: imperium-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.32s both;
+        }
+
+        /* Links cascade in with stagger */
+        .links { animation: imperium-rise 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+        .links:nth-child(1)  { animation-delay: 0.40s; }
+        .links:nth-child(2)  { animation-delay: 0.46s; }
+        .links:nth-child(3)  { animation-delay: 0.52s; }
+        .links:nth-child(4)  { animation-delay: 0.58s; }
+        .links:nth-child(5)  { animation-delay: 0.64s; }
+        .links:nth-child(6)  { animation-delay: 0.70s; }
+        .links:nth-child(7)  { animation-delay: 0.76s; }
+        .links:nth-child(8)  { animation-delay: 0.82s; }
+        .links:nth-child(9)  { animation-delay: 0.88s; }
+        .links:nth-child(10) { animation-delay: 0.94s; }
+
+        /* ─── JOKE REVEAL ───────────────────────────────────────────────── */
+
+        /* Jokes start invisible; IntersectionObserver adds .is-visible on scroll */
+        .joke p {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .joke p.is-visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* Accessibility: respeita preferência de movimento reduzido */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                transition-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
+                animation-delay: 0ms !important;
+            }
+            .links:not(.links--disabled):hover {
+                transform: none;
+            }
+            /* Jokes always visible when motion is reduced */
+            .joke p {
+                opacity: 1 !important;
+                transform: none !important;
+            }
+        }
     </style>
 </head>
 
 <body>
     <nav class="navbar">
-        <a class="navbar-brand" href="#" alt="Ir para a Home">
-            <img id="logoImperium" loading="lazy" alt="Logo Imperium LARP" width="116" height="55"
+        <a class="navbar-brand" href="#" aria-label="Ir para a Home">
+            <img id="logoImperium" loading="eager" alt="Imperium LARP" width="137" height="65"
                 src="./imagens/logo-imperium.webp">
         </a>
     </nav>
@@ -532,6 +610,7 @@
     </section>
 
     <script>
+        // Logo gyroscope easter egg
         let brand = document.querySelector(".navbar-brand");
         brand.addEventListener("click", () => {
             navigator.vibrate(350);
@@ -541,10 +620,23 @@
         function deviceOrientationHandler(eventData) {
             var tiltLR = eventData.gamma;
             var tiltFB = eventData.beta;
-
             let logo = document.querySelector("#logoImperium");
             logo.style.transform = "rotate(" + tiltLR + "deg) rotate3d(1,0,0, " + (tiltFB * -1) + "deg)";
         }
+
+        // Joke text scroll reveal
+        const jokeObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    jokeObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.4
+        });
+
+        document.querySelectorAll('.joke p').forEach(el => jokeObserver.observe(el));
     </script>
 </body>
 
