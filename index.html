@@ -302,6 +302,20 @@
             .links:not(.links--disabled) a {
                 color: #f0e8e2;
             }
+
+            /* Mobile: runa já traçada suavemente — o botão está "encantado" */
+            .links:not(.links--disabled) .rune-rect {
+                stroke-dashoffset: 0;
+                stroke-opacity: 0.25;
+                transition: none;
+            }
+
+            /* Tap: runa brilha dourada no toque */
+            .links:not(.links--disabled):active .rune-rect {
+                stroke: var(--gold);
+                stroke-opacity: 0.85;
+                transition: stroke-opacity 0.08s ease-out;
+            }
         }
 
         /* ─── JOKE SECTION ───────────────────────────────────────────────── */
@@ -358,6 +372,49 @@
         /* Small ornament for joke paragraphs */
         .joke p + p {
             margin-top: 8px;
+        }
+
+        /* ─── RUNE TRACE ─────────────────────────────────────────────────── */
+
+        .links__rune {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 3;
+            overflow: visible;
+        }
+
+        /* Default = exit transition (faster, ease-in) */
+        .rune-rect {
+            fill: none;
+            stroke: var(--gold);
+            stroke-width: 1.5;
+            stroke-dasharray: 1;
+            stroke-dashoffset: 1;
+            stroke-opacity: 0;
+            filter: url(#rune-glow);
+            transition:
+                stroke-dashoffset 0.32s ease-in,
+                stroke-opacity 0.28s ease-out;
+        }
+
+        /* Hover = entry transition (slower, ease-out-expo) */
+        .links:not(.links--disabled):hover .rune-rect {
+            stroke-dashoffset: 0;
+            stroke-opacity: 0.85;
+            transition:
+                stroke-dashoffset 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.06s,
+                stroke-opacity 0.2s ease-out;
+        }
+
+        /* Tap/click: rune flares crimson instantly */
+        .links:not(.links--disabled):active .rune-rect {
+            stroke: var(--crimson-bright);
+            stroke-opacity: 1;
+            stroke-dashoffset: 0;
+            transition: none;
         }
 
         /* ─── ENTRANCE ANIMATIONS ──────────────────────────────────────── */
@@ -434,11 +491,31 @@
                 opacity: 1 !important;
                 transform: none !important;
             }
+            /* Rune visible but not animated */
+            .rune-rect {
+                stroke-dashoffset: 0 !important;
+                stroke-opacity: 0.4 !important;
+                transition: none !important;
+            }
         }
     </style>
 </head>
 
 <body>
+    <!-- SVG filter definitions (não renderiza) -->
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"
+         style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none">
+        <defs>
+            <filter id="rune-glow" x="-60%" y="-60%" width="220%" height="220%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur"/>
+                <feMerge>
+                    <feMergeNode in="blur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+            </filter>
+        </defs>
+    </svg>
+
     <nav class="navbar">
         <a class="navbar-brand" href="#" aria-label="Ir para a Home">
             <img id="logoImperium" loading="eager" alt="Imperium LARP" width="137" height="65"
@@ -452,7 +529,7 @@
         </div>
 
         <ul>
-            <li class="links">
+            <!-- <li class="links">
                 <div class="links__icon">
                     <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
                         <path d="M208,56H180.28L166.65,35.56A8,8,0,0,0,160,32H96a8,8,0,0,0-6.65,3.56L75.71,56H48A24,24,0,0,0,24,80V192a24,24,0,0,0,24,24H208a24,24,0,0,0,24-24V80A24,24,0,0,0,208,56Zm8,136a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V80a8,8,0,0,1,8-8H80a8,8,0,0,0,6.66-3.56L100.28,48h55.43l13.63,20.44A8,8,0,0,0,176,72h32a8,8,0,0,1,8,8ZM128,88a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,88Zm0,72a28,28,0,1,1,28-28A28,28,0,0,1,128,160Z"/>
@@ -461,11 +538,11 @@
                 <a href="https://drive.google.com/drive/folders/1ntld3Ipfn7xiWPHudQKcrJkz-LqEexOQ" target="_blank" rel="noopener noreferrer">
                     Fotos — Sombras de Nobilia
                 </a>
-            </li>
+            </li> -->
 
-            <li class="links links--disabled">
-                <a href="#" tabindex="-1" aria-disabled="true">
-                    Sem data para o próximo evento
+            <li class="links">
+                <a href="https://www.sympla.com.br/evento/imperium-larp-2026-as-reliquias-da-ordem/3448989">
+                    Ingressos: Imperium LARP 2026: As Relíquias da Ordem
                 </a>
             </li>
 
@@ -491,7 +568,7 @@
                 </a>
             </li>
 
-            <li class="links">
+            <!-- <li class="links">
                 <div class="links__icon">
                     <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
                         <path d="M96 0C43 0 0 43 0 96V416c0 53 43 96 96 96H384h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V384c17.7 0 32-14.3 32-32V32c0-17.7-14.3-32-32-32H384 96zm0 384H352v64H96c-17.7 0-32-14.3-32-32s14.3-32 32-32zm32-240c0-8.8 7.2-16 16-16H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16zm16 48H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/>
@@ -500,9 +577,9 @@
                 <a href="https://drive.google.com/file/d/1-BO_SJyZCzSuNyFRsbZfeeHI3H1Okj3V/view?usp=sharing" target="_blank" rel="noopener noreferrer">
                     Tomo de Ambientação Sombras de Nobilia — PDF
                 </a>
-            </li>
+            </li> -->
 
-            <li class="links">
+            <!-- <li class="links">
                 <div class="links__icon">
                     <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
                         <path d="M210.3,56.34l-80-24A8,8,0,0,0,120,40V148a36,36,0,1,0,16,30V75.95l69.7,20.91A8,8,0,0,0,216,88V64A8,8,0,0,0,210.3,56.34ZM100,200a20,20,0,1,1-20-20A20,20,0,0,1,100,200ZM200,80.05,130.3,59.14,130,59V48.05l70,21Z"/>
@@ -511,9 +588,9 @@
                 <a href="https://soundcloud.com/imperium-larp/imperium-2025-tomo-de-ambientacao" target="_blank" rel="noopener noreferrer">
                     Tomo de Ambientação Sombras de Nobilia — Áudio
                 </a>
-            </li>
+            </li> -->
 
-            <li class="links">
+            <!-- <li class="links">
                 <div class="links__icon">
                     <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
                         <path d="M96 0C43 0 0 43 0 96V416c0 53 43 96 96 96H384h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V384c17.7 0 32-14.3 32-32V32c0-17.7-14.3-32-32-32H384 96zm0 384H352v64H96c-17.7 0-32-14.3-32-32s14.3-32 32-32zm32-240c0-8.8 7.2-16 16-16H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16zm16 48H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/>
@@ -522,7 +599,7 @@
                 <a href="https://drive.google.com/file/d/14pHw_-IK4PulwaWpkTXmU0jjXv-OMEe7/view?usp=sharing" target="_blank" rel="noopener noreferrer">
                     Tomo de Personagens 3.0
                 </a>
-            </li>
+            </li> -->
 
             <li class="links">
                 <div class="links__icon">
@@ -623,6 +700,12 @@
             let logo = document.querySelector("#logoImperium");
             logo.style.transform = "rotate(" + tiltLR + "deg) rotate3d(1,0,0, " + (tiltFB * -1) + "deg)";
         }
+
+        // Rune trace SVG injection
+        const runeSVG = '<svg class="links__rune" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><rect class="rune-rect" x="1" y="1" width="99%" height="99%" pathLength="1"/></svg>';
+        document.querySelectorAll('.links:not(.links--disabled)').forEach(el => {
+            el.insertAdjacentHTML('beforeend', runeSVG);
+        });
 
         // Joke text scroll reveal
         const jokeObserver = new IntersectionObserver((entries) => {
